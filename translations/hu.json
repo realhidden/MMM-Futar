@@ -1,4 +1,4 @@
 {
   "LOADING": "Menetrend betöltése...",
-  "NO_DEPARTURE": "Nem indul a következő {minutes} percben."
+  "NO_DEPARTURE": "Nincs járat {minutes} percen belül."
 }
