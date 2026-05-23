@@ -105,13 +105,7 @@ var config = {
 }
 ```
 
-5. If you receive `Cannot find module 'request'` error after starting MagicMirror install this package manually:
-
-```bash
-npm install request
-```
-
-This is required because newer versions of MagicMirror do not include this module that MMM-Futar depends on out of the box.
+> **Note:** Starting from version 2.1.0 this module uses `axios` (declared as a regular dependency) instead of the deprecated `request` library, so it works out of the box with recent MagicMirror² releases. Just make sure to run `npm install` in step 3 above.
 
 ## Configuration options
 
@@ -123,6 +117,7 @@ This is required because newer versions of MagicMirror do not include this modul
 | `minutesAfter`               | *Optional* The number of minutes of how far the module should list the departure times in the future. Increase this value to show more departure times, or decrease it to display less, and make the module smaller. <br><br>**Type:** `int` (minutes) <br>**Default value:** `50`
 | `hideStopTimesInNextMinutes` | *Optional* The number of next minutes for which the module should not display departure times. For example if the nearest stop is in a 5-minute walk from your home, you can set this value to `5` to not show departures in the next 5 minutes. <br><br>**Type:** `int` (minutes) <br>**Default value:** `0`
 | `updateInterval`             | *Optional* The frequency of when the module should query the departure times from the Futár service. <br><br>**Type:** `int` (milliseconds) <br>**Default value:** `60000` milliseconds (1 minute)
+| `cacheTtl`                   | *Optional* How long a successful API response is kept in the in-memory cache. Multiple module instances watching the same stop share the cache and the in-flight request, which avoids redundant network calls. Set to `0` to disable caching. <br><br>**Type:** `int` (milliseconds) <br>**Default value:** `30000` milliseconds (30 seconds)
 | `showHead`                   | *Optional* Determines whether the module should display a custom headline (independently from the standard headline of the module). The route name in the head is based on the data received from the Futár service. <br><br>**Type:** `boolean` <br>**Default value:** `true`
 | `showSymbolInHead`           | *Optional* Determines whether the custom headline should show the icon of the route.<br><br>**Type:** `boolean`  <br>**Default value:** `true`
 | `showSymbolInStopTime`       | *Optional* Determines whether every stop time line should show the icon of the route. <br><br>**Type:** `boolean`  <br>**Default value:** `false`
