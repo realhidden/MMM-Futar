@@ -3,6 +3,11 @@
 All notable changes to this project is documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.3.0]
+
+- CHANGED: Replaced `axios` with Node's built-in global `fetch` (stable since Node 22, which is what MM 2.36+ ships). The module now has **zero runtime npm dependencies** — installations no longer need a separate `npm install` step.
+- IMPROVED: Request timeout now uses `AbortController` for a clean cancellation of the underlying socket.
+
 ## [2.2.0]
 
 - ADDED: New `showHeadsignInHead` configuration option (default `false`). When `true`, the next departure's destination (e.g. "Keleti pályaudvar M") is appended to the head, after the route number.

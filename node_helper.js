@@ -1,30 +1,20 @@
 /* Magic Mirror Node Helper: MMM-Futar
  * Fetches Budapest public transport (BKK Futár) arrivals.
  *
- * Migrated off the deprecated `request` library to `axios`. Adds a small
- * shared cache so multiple module instances watching the same stop reuse a
- * single network round-trip, and so newly-loaded instances render instantly
- * if data is already on hand.
+ * Uses Node's built-in global fetch (stable since Node 22, ships with MM
+ * 2.36+). Zero runtime npm dependencies — no `npm install` needed.
+ *
+ * Adds a small shared cache so multiple module instances watching the same
+ * stop reuse a single network round-trip, and so newly-loaded instances
+ * render instantly if data is already on hand.
  */
 
 const NodeHelper = require('node_helper'); // eslint-disable-line import/no-unresolved
-const https = require('https');
-const axios = require('axios'); // eslint-disable-line import/no-extraneous-dependencies
 
 const BASE_URL = 'https://futar.bkk.hu/api/query/v1/ws/otp/api/where/arrivals-and-departures-for-stop.json';
 const REQUEST_TIMEOUT_MS = 10000;
 const DEFAULT_CACHE_TTL_MS = 30000;
 const LOG_PREFIX = 'MMM-Futar:';
-
-const httpsAgent = new https.Agent({ keepAlive: true, maxSockets: 4 });
-
-const httpClient = axios.create({
-  timeout: REQUEST_TIMEOUT_MS,
-  httpsAgent,
-  // axios decompresses gzip/deflate by default; declare it explicitly anyway
-  headers: { 'Accept-Encoding': 'gzip, deflate' },
-  responseType: 'json'
-});
 
 module.exports = NodeHelper.create({
   start() {
@@ -100,19 +90,30 @@ module.exports = NodeHelper.create({
   },
 
   async _requestFromApi(config) {
-    const params = {
+    const params = new URLSearchParams({
       stopId: config.stopId,
-      onlyDepartures: true,
-      minutesBefore: 0,
-      minutesAfter: config.minutesAfter,
+      onlyDepartures: 'true',
+      minutesBefore: '0',
+      minutesAfter: String(config.minutesAfter),
       key: config.apiKey
-    };
+    });
+    const url = `${BASE_URL}?${params.toString()}`;
 
-    const response = await httpClient.get(BASE_URL, { params });
-    if (!response.data || !response.data.data) {
-      throw new Error('Unexpected response shape from Futár API');
+    const ctrl = new AbortController();
+    const timeoutId = setTimeout(() => ctrl.abort(), REQUEST_TIMEOUT_MS);
+    try {
+      const res = await fetch(url, { signal: ctrl.signal });
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status} ${res.statusText}`);
+      }
+      const body = await res.json();
+      if (!body || !body.data) {
+        throw new Error('Unexpected response shape from Futár API');
+      }
+      return body.data;
+    } finally {
+      clearTimeout(timeoutId);
     }
-    return response.data.data;
   },
 
   _send(moduleId, data) {
