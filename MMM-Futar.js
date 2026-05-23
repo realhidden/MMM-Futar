@@ -15,8 +15,11 @@ Module.register('MMM-Futar', {
     align: 'left', // 'left' | 'right',
     showHead: true, // true | false
     showSymbolInHead: true, // true | false
+    showHeadsignInHead: false, // true | false — append next departure's destination to the head
     showSymbolInStopTime: false, // true | false
     showRouteNameInStopTime: false, // true | false
+    showHeadsignInStopTime: false, // true | false — show each departure's destination
+    headsignSeparator: ' → ',
     maxNumberOfItems: 3,
     coloredSymbolInHead: true, // true | false
     coloredTextInHead: true, // true | false
@@ -149,6 +152,13 @@ Module.register('MMM-Futar', {
     }
     headEl.appendChild(headTextEl);
 
+    if (this.config.showHeadsignInHead && this.viewModel.headsign) {
+      const headsignEl = document.createElement('span');
+      headsignEl.classList = 'head-headsign';
+      headsignEl.innerHTML = `${this.config.headsignSeparator}${this.viewModel.headsign}`;
+      headEl.appendChild(headsignEl);
+    }
+
     return headEl;
   },
 
@@ -178,6 +188,13 @@ Module.register('MMM-Futar', {
     absoluteTimeEl.classList = 'absolute-time dimmed';
     absoluteTimeEl.innerHTML = ` (${departureTime.absoluteTime})`;
     timeEl.appendChild(absoluteTimeEl);
+
+    if (this.config.showHeadsignInStopTime && departureTime.headsign) {
+      const headsignEl = document.createElement('td');
+      headsignEl.classList = 'stop-time-headsign dimmed';
+      headsignEl.innerHTML = `${this.config.headsignSeparator}${departureTime.headsign}`;
+      timeEl.appendChild(headsignEl);
+    }
 
     if (departureTime.alertHeader && (this.config.alerts.showHeaderInStopTime || this.config.alerts.showSymbolInStopTime)) {
       const alertEl = this._getDomForAlertHeaderInStopTime(departureTime.alertHeader);
@@ -328,6 +345,7 @@ Module.register('MMM-Futar', {
         const departureTime = {
           relativeTime: timeInLocalTime.fromNow(),
           absoluteTime: timeInLocalTime.format('LT'),
+          headsign: stopTime.stopHeadsign,
           routeName,
           routeType,
           alertHeader
@@ -353,7 +371,10 @@ Module.register('MMM-Futar', {
         : 'BUS',
       routeName: departureTimesLimited.length > 0
         ? departureTimesLimited[0].routeName
-        : this._getRouteName(null, routes)
+        : this._getRouteName(null, routes),
+      headsign: departureTimesLimited.length > 0
+        ? departureTimesLimited[0].headsign
+        : null
     };
 
     if (!this.hasData) {
@@ -443,10 +464,8 @@ Module.register('MMM-Futar', {
     let opacity = 1;
 
     if (this.config.fade && this.config.fadePoint < 1) {
-      if (this.config.fadePoint < 0) {
-        this.config.fadePoint = 0;
-      }
-      const startingPoint = totalNumberOfRows * this.config.fadePoint;
+      const fadePoint = Math.max(0, this.config.fadePoint);
+      const startingPoint = totalNumberOfRows * fadePoint;
       const steps = totalNumberOfRows - startingPoint;
       if (currentRowNumber >= startingPoint) {
         const currentStep = currentRowNumber - startingPoint;

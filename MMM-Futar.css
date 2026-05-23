@@ -44,4 +44,14 @@
   padding-left: 10px;
   white-space: nowrap;
 }
+
+.MMM-Futar .head-headsign {
+  margin-left: 6px;
+  font-weight: normal;
+}
+
+.MMM-Futar .stop-time-headsign {
+  padding-left: 10px;
+  white-space: nowrap;
+}
 /* stylelint-enable selector-class-pattern */

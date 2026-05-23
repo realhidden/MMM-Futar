@@ -3,6 +3,13 @@
 All notable changes to this project is documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.2.0]
+
+- ADDED: New `showHeadsignInHead` configuration option (default `false`). When `true`, the next departure's destination (e.g. "Keleti pályaudvar M") is appended to the head, after the route number.
+- ADDED: New `showHeadsignInStopTime` configuration option (default `false`). When `true`, each departure row shows the destination — useful at stops where the same route has multiple terminals (e.g. trolleybus 82 at Mexikói út vs. Uzsoki Utcai Kórház).
+- ADDED: New `headsignSeparator` configuration option (default `" → "`). Prefix used before the destination in both head and stop-time rendering.
+- FIXED: `_getRowOpacity` no longer mutates `config.fadePoint` when the operator-provided value is negative — uses a local clamp instead.
+
 ## [2.1.0]
 
 - CHANGED: Replaced the deprecated `request` library with `axios` in the node helper. This is needed because recent versions of MagicMirror² no longer ship `request`. The module now installs its own dependency via `npm install`.

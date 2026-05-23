@@ -75,8 +75,11 @@ var config = {
         updateInterval: 60000, // 1 minute in milliseconds
         showHead: true, // true | false
         showSymbolInHead: true, // true | false
+        showHeadsignInHead: false, // true | false
         showSymbolInStopTime: false, // true | false
         showRouteNameInStopTime: false, // true | false
+        showHeadsignInStopTime: false, // true | false
+        headsignSeparator: ' → ',
         maxNumberOfItems: 3,
         align: 'left', // 'left' | 'right'
         fade: true,
@@ -120,6 +123,9 @@ var config = {
 | `cacheTtl`                   | *Optional* How long a successful API response is kept in the in-memory cache. Multiple module instances watching the same stop share the cache and the in-flight request, which avoids redundant network calls. Set to `0` to disable caching. <br><br>**Type:** `int` (milliseconds) <br>**Default value:** `30000` milliseconds (30 seconds)
 | `showHead`                   | *Optional* Determines whether the module should display a custom headline (independently from the standard headline of the module). The route name in the head is based on the data received from the Futár service. <br><br>**Type:** `boolean` <br>**Default value:** `true`
 | `showSymbolInHead`           | *Optional* Determines whether the custom headline should show the icon of the route.<br><br>**Type:** `boolean`  <br>**Default value:** `true`
+| `showHeadsignInHead`         | *Optional* Determines whether the next departure's destination (the trip's `stopHeadsign` from the Futár API, e.g. `"Keleti pályaudvar M"`) should be appended to the headline. <br><br>**Type:** `boolean`  <br>**Default value:** `false`
+| `showHeadsignInStopTime`     | *Optional* Determines whether every stop time line should show the destination of that specific trip. Useful at stops where the same route has multiple terminals. <br><br>**Type:** `boolean`  <br>**Default value:** `false`
+| `headsignSeparator`          | *Optional* Prefix rendered before the destination in both head and stop-time positions. <br><br>**Type:** `string`  <br>**Default value:** `" → "`
 | `showSymbolInStopTime`       | *Optional* Determines whether every stop time line should show the icon of the route. <br><br>**Type:** `boolean`  <br>**Default value:** `false`
 | `showRouteNameInStopTime`    | *Optional* Determines whether every stop time line should show the name of the route. <br><br>**Type:** `boolean`  <br>**Default value:** `false`
 | `maxNumberOfItems`           | *Optional* Determines the limit for the number of displayed departure times. <br><br>**Type:** `number`  <br>**Default value:** `3`
